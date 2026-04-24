@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nudge Academy — Accounts</title>
+  <meta name="description" content="Internal accounting system for Nudge Academy">
+  <link rel="icon" type="image/png" href="../nudge-academy-main/assets/images/favicon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css?v=3">
+</head>
+
+<body>
+
+  <!-- ==================== LOGIN ==================== -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <div class="login-logo"><i class="fas fa-calculator"></i></div>
+      <h1>Nudge Accounts</h1>
+      <p>Internal accounting dashboard</p>
+      <form id="login-form" class="login-form">
+        <div class="form-group">
+          <label for="login-email">Email</label>
+          <input type="email" id="login-email" placeholder="you@nudge.academy" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" id="login-btn">
+          <span>Sign In</span><i class="fas fa-arrow-right"></i>
+        </button>
+        <p id="login-error" class="login-error"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== APP ==================== -->
+  <div id="app" class="app" style="display:none;">
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fas fa-calculator"></i><span>Nudge Accounts</span></div>
+        <button class="sidebar-close" id="sidebar-close"><i class="fas fa-times"></i></button>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+        <a href="#" class="nav-item" data-page="transactions"><i class="fas fa-exchange-alt"></i><span>Transactions</span></a>
+        <a href="#" class="nav-item" data-page="students"><i class="fas fa-user-graduate"></i><span>Students</span></a>
+        <a href="#" class="nav-item" data-page="faculty"><i class="fas fa-chalkboard-teacher"></i><span>Faculty</span></a>
+        <a href="#" class="nav-item" data-page="investors"><i class="fas fa-hand-holding-usd"></i><span>Investors</span></a>
+        <a href="#" class="nav-item" data-page="reports"><i class="fas fa-file-alt"></i><span>Reports</span></a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="user-avatar">A</div>
+          <div class="user-details">
+            <span id="user-name">Admin</span>
+            <small id="user-email">admin@nudge.academy</small>
+          </div>
+        </div>
+        <button class="btn-logout" id="logout-btn" title="Sign Out"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
+    </aside>
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menu-btn"><i class="fas fa-bars"></i></button>
+        <h2 class="page-title" id="page-title">Dashboard</h2>
+        <div class="topbar-actions">
+          <button class="btn btn-primary btn-add" id="add-transaction-btn">
+            <i class="fas fa-plus"></i><span>Add Transaction</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="content">
+
+        <!-- ===== DASHBOARD ===== -->
+        <section id="page-dashboard" class="page active">
+          <div class="month-picker">
+            <button class="month-nav" id="prev-month"><i class="fas fa-chevron-left"></i></button>
+            <span class="month-label" id="month-label">—</span>
+            <button class="month-nav" id="next-month"><i class="fas fa-chevron-right"></i></button>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card stat-income">
+              <div class="stat-icon"><i class="fas fa-arrow-down"></i></div>
+              <div class="stat-body">
+                <span class="stat-label">Income (Revenue)</span>
+                <span class="stat-value" id="stat-income">₹0</span>
+              </div>
+            </div>
+            <div class="stat-card stat-expense">
+              <div class="stat-icon"><i class="fas fa-arrow-up"></i></div>
+              <div class="stat-body">
+                <span class="stat-label">Expenses</span>
+                <span class="stat-value" id="stat-expense">₹0</span>
+              </div>
+            </div>
+            <div class="stat-card stat-investment" style="background: rgba(168,85,247,0.02)">
+              <div class="stat-icon" style="background: rgba(168,85,247,0.1); color: #a855f7;"><i class="fas fa-hand-holding-usd"></i></div>
+              <div class="stat-body">
+                <span class="stat-label">Investment (Capital)</span>
+                <span class="stat-value" id="stat-investment">₹0</span>
+              </div>
+            </div>
+            <div class="stat-card stat-balance">
+              <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+              <div class="stat-body">
+                <span class="stat-label">Net Profit (Income − Expenses)</span>
+                <span class="stat-value" id="stat-balance">₹0</span>
+                <small class="stat-sub" id="stat-cash-hint">Cash in Hand: ₹0</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-title" style="margin-bottom: 20px;">
+            <h3 style="font-size: 1.125rem; font-weight: 600; color: var(--text);">All-Time Overview</h3>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card stat-income" style="background: rgba(34,197,94,0.02)">
+              <div class="stat-icon"><i class="fas fa-arrow-down"></i></div>
+              <div class="stat-body">
+                <span class="stat-label">Total Income</span>
+                <span class="stat-value" id="stat-all-income">₹0</span>
+              </div>
+            </div>
+            <div class="stat-card stat-expense" style="background: rgba(239,68,68,0.02)">
+              <div class="stat-icon"><i class="fas fa-arrow-up"></i></div>
+              <div class="stat-body">
+                <span class="stat-label">Total Expenses</span>
+                <span class="stat-value" id="stat-all-expense">₹0</span>
+              </div>
+            </div>
+            <div class="stat-card stat-investment" style="background: rgba(168,85,247,0.02)">
+              <div class="stat-icon" style="background: rgba(168,85,247,0.1); color: #a855f7;"><i class="fas fa-hand-holding-usd"></i></div>
+              <div class="stat-body">
+                <span class="stat-label">Total Investment</span>
+                <span class="stat-value" id="stat-all-investment">₹0</span>
+              </div>
+            </div>
+            <div class="stat-card stat-balance" style="background: rgba(59,130,246,0.02)">
+              <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+              <div class="stat-body">
+                <span class="stat-label">Net Profit (All-Time)</span>
+                <span class="stat-value" id="stat-all-balance">₹0</span>
+                <small class="stat-sub" id="stat-all-cash-hint">Cash in Hand: ₹0</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cash by payment method -->
+          <div class="card" style="margin-bottom: 28px;">
+            <div class="card-header"><h3>Cash Position by Account</h3></div>
+            <div class="card-body">
+              <div class="method-grid">
+                <div class="method-card">
+                  <div class="method-icon"><i class="fas fa-money-bill-wave"></i></div>
+                  <div class="method-body">
+                    <span class="method-label">Cash</span>
+                    <span class="method-value" id="cash-balance-cash">₹0</span>
+                  </div>
+                </div>
+                <div class="method-card">
+                  <div class="method-icon"><i class="fas fa-mobile-alt"></i></div>
+                  <div class="method-body">
+                    <span class="method-label">UPI</span>
+                    <span class="method-value" id="cash-balance-upi">₹0</span>
+                  </div>
+                </div>
+                <div class="method-card">
+                  <div class="method-icon"><i class="fas fa-university"></i></div>
+                  <div class="method-body">
+                    <span class="method-label">Bank</span>
+                    <span class="method-value" id="cash-balance-bank">₹0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-header"><h3>Expense Breakdown (This Month)</h3></div>
+              <div class="card-body">
+                <div class="breakdown-bars" id="breakdown-bars"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <h3>Recent Transactions</h3>
+                <a href="#" class="card-link" data-page="transactions">View All</a>
+              </div>
+              <div class="card-body">
+                <div class="recent-list" id="recent-transactions">
+                  <div class="empty-state"><i class="fas fa-receipt"></i><p>No transactions this month</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="card card-wide">
+              <div class="card-header"><h3>Student Fees Overview</h3><a href="#" class="card-link" data-page="students">View All</a></div>
+              <div class="card-body">
+                <div class="student-summary-grid">
+                  <div class="mini-stat"><span class="mini-stat-value" id="total-students">0</span><span class="mini-stat-label">Total Students</span></div>
+                  <div class="mini-stat"><span class="mini-stat-value" id="total-collected">₹0</span><span class="mini-stat-label">Collected</span></div>
+                  <div class="mini-stat"><span class="mini-stat-value mini-stat-danger" id="total-dues">₹0</span><span class="mini-stat-label">Pending Dues</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-grid">
+            <div class="card card-wide">
+              <div class="card-header"><h3>Faculty Payables Overview</h3><a href="#" class="card-link" data-page="faculty">View All</a></div>
+              <div class="card-body">
+                <div class="student-summary-grid">
+                  <div class="mini-stat"><span class="mini-stat-value" id="total-faculty">0</span><span class="mini-stat-label">Total Faculties</span></div>
+                  <div class="mini-stat"><span class="mini-stat-value paid" id="total-paid-faculty">₹0</span><span class="mini-stat-label">Total Paid</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== TRANSACTIONS ===== -->
+        <section id="page-transactions" class="page">
+          <div class="filters-bar">
+            <button class="btn btn-sm filters-toggle" id="filters-toggle">
+              <i class="fas fa-filter"></i> Filters
+              <i class="fas fa-chevron-down filters-toggle-icon"></i>
+            </button>
+            <div class="filters-body" id="filters-body">
+              <div class="filter-group">
+                <label>From</label>
+                <input type="date" id="filter-from" class="filter-input">
+              </div>
+              <div class="filter-group">
+                <label>To</label>
+                <input type="date" id="filter-to" class="filter-input">
+              </div>
+              <div class="filter-group">
+                <label>Type</label>
+                <select id="filter-type" class="filter-input">
+                  <option value="all">All</option>
+                  <option value="income">Income</option>
+                  <option value="expense">Expense</option>
+                  <option value="investment">Investment</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label>Method</label>
+                <select id="filter-method" class="filter-input">
+                  <option value="all">All</option>
+                  <option value="cash">Cash</option>
+                  <option value="upi">UPI</option>
+                  <option value="bank">Bank</option>
+                </select>
+              </div>
+              <div class="filter-group filter-group-search">
+                <label>Search</label>
+                <input type="text" id="filter-search" class="filter-input" placeholder="Note or source name…">
+              </div>
+              <button class="btn btn-sm" id="reset-filters"><i class="fas fa-undo"></i> Reset</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table" id="transactions-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Category</th>
+                  <th>Source</th>
+                  <th>Amount</th>
+                  <th>Note</th>
+                  <th>Method</th>
+                  <th>Added By</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="transactions-tbody"></tbody>
+            </table>
+            <div class="empty-state" id="transactions-empty"><i class="fas fa-receipt"></i><p>No transactions found</p></div>
+          </div>
+        </section>
+
+        <!-- ===== STUDENTS ===== -->
+        <section id="page-students" class="page">
+          <div class="page-actions" style="justify-content: space-between; display: flex; align-items: center; gap: 1rem;">
+            <div class="search-wrap" style="flex: 1; max-width: 400px; position: relative;">
+              <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-light);"></i>
+              <input type="text" id="search-students" placeholder="Search by name or batch…" style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 0.5rem; border: 1px solid var(--border); background: var(--bg-card); color: var(--text);">
+            </div>
+            <button class="btn btn-primary" id="add-student-btn"><i class="fas fa-user-plus"></i> Add Student</button>
+          </div>
+          <div class="students-grid" id="students-grid"></div>
+        </section>
+
+        <!-- ===== FACULTY ===== -->
+        <section id="page-faculty" class="page">
+          <div class="page-actions" style="justify-content: space-between; display: flex; align-items: center; gap: 1rem;">
+            <div class="search-wrap" style="flex: 1; max-width: 400px; position: relative;">
+              <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-light);"></i>
+              <input type="text" id="search-faculty" placeholder="Search by name or subject…" style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 0.5rem; border: 1px solid var(--border); background: var(--bg-card); color: var(--text);">
+            </div>
+            <button class="btn btn-primary" id="add-faculty-btn"><i class="fas fa-user-plus"></i> Add Faculty</button>
+          </div>
+          <div class="students-grid" id="faculty-grid"></div>
+        </section>
+
+        <!-- ===== INVESTORS ===== -->
+        <section id="page-investors" class="page">
+          <div class="page-actions" style="justify-content: space-between; display: flex; align-items: center; gap: 1rem;">
+            <div class="search-wrap" style="flex: 1; max-width: 400px; position: relative;">
+              <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-light);"></i>
+              <input type="text" id="search-investors" placeholder="Search by name…" style="width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; border-radius: 0.5rem; border: 1px solid var(--border); background: var(--bg-card); color: var(--text);">
+            </div>
+            <button class="btn btn-primary" id="add-investor-btn"><i class="fas fa-user-plus"></i> Add Investor</button>
+          </div>
+          <div class="students-grid" id="investors-grid"></div>
+        </section>
+
+        <!-- ===== REPORTS ===== -->
+        <section id="page-reports" class="page">
+          <div class="report-controls">
+            <div class="filter-group">
+              <label>Month</label>
+              <select id="report-month" class="filter-input"></select>
+            </div>
+            <div class="filter-group">
+              <label>Year</label>
+              <select id="report-year" class="filter-input"></select>
+            </div>
+            <button class="btn btn-primary" id="generate-report"><i class="fas fa-chart-bar"></i> Generate</button>
+            <button class="btn btn-sm" id="export-csv"><i class="fas fa-download"></i> Export CSV</button>
+          </div>
+
+          <div class="report-content" id="report-content">
+            <div class="card card-wide">
+              <div class="card-header"><h3>Profit &amp; Loss Statement</h3></div>
+              <div class="card-body">
+                <div class="pnl-grid">
+                  <div class="pnl-section-title">Operating Revenue</div>
+                  <div class="pnl-row pnl-sub"><span>Student Fees</span><span id="pnl-rev-student">₹0</span></div>
+                  <div class="pnl-row pnl-sub"><span>Other Income</span><span id="pnl-rev-other">₹0</span></div>
+                  <div class="pnl-row pnl-income"><span>Total Revenue</span><span id="pnl-income">₹0</span></div>
+
+                  <div class="pnl-section-title">Operating Expenses</div>
+                  <div class="pnl-row pnl-sub"><span>Faculty Payments</span><span id="pnl-exp-faculty">₹0</span></div>
+                  <div class="pnl-row pnl-sub"><span>Operational</span><span id="pnl-exp-operational">₹0</span></div>
+                  <div class="pnl-row pnl-sub"><span>Course Creation</span><span id="pnl-exp-course">₹0</span></div>
+                  <div class="pnl-row pnl-sub"><span>Marketing</span><span id="pnl-exp-marketing">₹0</span></div>
+                  <div class="pnl-row pnl-sub"><span>Other Expenses</span><span id="pnl-exp-other">₹0</span></div>
+                  <div class="pnl-row pnl-expense" style="font-weight:600;"><span>Total Expenses</span><span id="pnl-total-expense">₹0</span></div>
+
+                  <div class="pnl-divider"></div>
+                  <div class="pnl-row pnl-total"><span>Net Operating Profit / Loss</span><span id="pnl-net">₹0</span></div>
+
+                  <div class="pnl-section-title" style="color:#a855f7;">Capital / Non-Operating</div>
+                  <div class="pnl-row pnl-investment"><span>Investment Received</span><span id="pnl-investment">₹0</span></div>
+
+                  <div class="pnl-divider"></div>
+                  <div class="pnl-row pnl-total"><span>Net Cash Change (incl. Investment)</span><span id="pnl-cash">₹0</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card card-wide">
+              <div class="card-header"><h3>Category Breakdown</h3></div>
+              <div class="card-body"><canvas id="category-chart" width="600" height="250"></canvas></div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== TRANSACTION MODAL (direct add/edit) ==================== -->
+  <div class="modal-overlay" id="transaction-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-title">Add Transaction</h3>
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+      </div>
+      <form id="transaction-form" class="modal-form">
+        <input type="hidden" id="edit-txn-id">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="txn-date">Date</label>
+            <input type="date" id="txn-date" required>
+          </div>
+          <div class="form-group">
+            <label for="txn-type">Type</label>
+            <select id="txn-type" required>
+              <option value="expense">Expense</option>
+              <option value="income">Income</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="txn-category">Category</label>
+            <select id="txn-category" required></select>
+          </div>
+          <div class="form-group">
+            <label for="txn-amount">Amount (₹)</label>
+            <input type="number" id="txn-amount" min="1" step="1" placeholder="0" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="txn-method">Payment Method</label>
+          <select id="txn-method" required>
+            <option value="cash">Cash</option>
+            <option value="upi">UPI</option>
+            <option value="bank">Bank Transfer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="txn-note">Note</label>
+          <input type="text" id="txn-note" placeholder="What is this for?" maxlength="200">
+        </div>
+        <p class="form-hint">
+          <i class="fas fa-info-circle"></i>
+          Use this form for direct entries only. Student fees, faculty payments, and investments are recorded from their respective pages.
+        </p>
+        <button type="submit" class="btn btn-primary btn-full">
+          <i class="fas fa-check"></i> <span id="txn-submit-text">Save Transaction</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== STUDENT MODAL ==================== -->
+  <div class="modal-overlay" id="student-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="student-modal-title">Add Student</h3>
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+      </div>
+      <form id="student-form" class="modal-form">
+        <input type="hidden" id="edit-stu-id">
+        <div class="form-group">
+          <label for="stu-name">Student Name</label>
+          <input type="text" id="stu-name" placeholder="Full name" required>
+        </div>
+        <div class="form-group">
+          <label for="stu-batch">Batch</label>
+          <input type="text" id="stu-batch" placeholder="e.g. Commerce 2026" required>
+        </div>
+        <div class="form-group">
+          <label for="stu-fee">Total Fee (₹)</label>
+          <input type="number" id="stu-fee" min="1" step="1" placeholder="0" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-check"></i> <span id="stu-submit-text">Add Student</span></button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== FACULTY MODAL ==================== -->
+  <div class="modal-overlay" id="faculty-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="faculty-modal-title">Add Faculty</h3>
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+      </div>
+      <form id="faculty-form" class="modal-form">
+        <input type="hidden" id="edit-fac-id">
+        <div class="form-group">
+          <label for="fac-name">Faculty Name</label>
+          <input type="text" id="fac-name" placeholder="Full name" required>
+        </div>
+        <div class="form-group">
+          <label for="fac-subject">Subject</label>
+          <input type="text" id="fac-subject" placeholder="e.g. Commerce" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-check"></i> <span id="fac-submit-text">Add Faculty</span></button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== INVESTOR MODAL ==================== -->
+  <div class="modal-overlay" id="investor-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="investor-modal-title">Add Investor</h3>
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+      </div>
+      <form id="investor-form" class="modal-form">
+        <input type="hidden" id="edit-inv-id">
+        <div class="form-group">
+          <label for="inv-name">Investor Name</label>
+          <input type="text" id="inv-name" placeholder="Full name" required>
+        </div>
+        <div class="form-group">
+          <label for="inv-note">Note (optional)</label>
+          <input type="text" id="inv-note" placeholder="e.g. Seed round, Partner" maxlength="200">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-check"></i> <span id="inv-submit-text">Add Investor</span></button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== RECORD STUDENT PAYMENT ==================== -->
+  <div class="modal-overlay" id="payment-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Record Student Payment</h3>
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+      </div>
+      <form id="payment-form" class="modal-form">
+        <input type="hidden" id="pay-student-id">
+        <div class="payment-info" id="payment-info"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="pay-amount">Amount (₹)</label>
+            <input type="number" id="pay-amount" min="1" step="1" placeholder="0" required>
+          </div>
+          <div class="form-group">
+            <label for="pay-method">Method</label>
+            <select id="pay-method" required>
+              <option value="cash">Cash</option>
+              <option value="upi">UPI</option>
+              <option value="bank">Bank Transfer</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="pay-date">Date</label>
+          <input type="date" id="pay-date" required>
+        </div>
+        <div class="form-group">
+          <label for="pay-note">Note (optional)</label>
+          <input type="text" id="pay-note" placeholder="e.g. Installment 2" maxlength="200">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-check"></i> Record Payment</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== RECORD FACULTY PAYMENT ==================== -->
+  <div class="modal-overlay" id="fac-payment-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Record Faculty Payment</h3>
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+      </div>
+      <form id="fac-payment-form" class="modal-form">
+        <input type="hidden" id="fac-pay-id">
+        <div class="payment-info" id="fac-payment-info"></div>
+        <div class="form-group">
+          <label for="fac-pay-unit">Unit / Topic Covered</label>
+          <input type="text" id="fac-pay-unit" placeholder="e.g. Unit 4: Microeconomics" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fac-pay-amount">Amount (₹)</label>
+            <input type="number" id="fac-pay-amount" min="1" step="1" placeholder="0" required>
+          </div>
+          <div class="form-group">
+            <label for="fac-pay-method">Method</label>
+            <select id="fac-pay-method" required>
+              <option value="cash">Cash</option>
+              <option value="upi">UPI</option>
+              <option value="bank">Bank Transfer</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="fac-pay-date">Date</label>
+          <input type="date" id="fac-pay-date" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-check"></i> Record Payment</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== RECORD INVESTMENT ==================== -->
+  <div class="modal-overlay" id="invest-payment-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Record Investment</h3>
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+      </div>
+      <form id="invest-payment-form" class="modal-form">
+        <input type="hidden" id="inv-pay-id">
+        <div class="payment-info" id="inv-payment-info"></div>
+        <div class="form-group">
+          <label for="inv-pay-note">Purpose</label>
+          <input type="text" id="inv-pay-note" placeholder="e.g. Equipment purchase, Marketing" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="inv-pay-amount">Amount (₹)</label>
+            <input type="number" id="inv-pay-amount" min="1" step="1" placeholder="0" required>
+          </div>
+          <div class="form-group">
+            <label for="inv-pay-method">Method</label>
+            <select id="inv-pay-method" required>
+              <option value="cash">Cash</option>
+              <option value="upi">UPI</option>
+              <option value="bank">Bank Transfer</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="inv-pay-date">Date</label>
+          <input type="date" id="inv-pay-date" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-check"></i> Record Investment</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== HISTORY MODALS ==================== -->
+  <div class="modal-overlay" id="stu-history-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Payment History</h3>
+        <div>
+          <button class="btn btn-sm btn-primary" id="stu-print-btn" style="margin-right: 10px; display:none;"><i class="fas fa-print"></i> Print Receipt</button>
+          <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 1rem;">
+        <div id="stu-history-info" style="margin-bottom: 1rem;"></div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Date</th><th>Method</th><th>Note</th><th>Amount</th></tr>
+            </thead>
+            <tbody id="stu-history-tbody"></tbody>
+          </table>
+          <div class="empty-state" id="stu-history-empty" style="display:none; padding: 2rem;"><p>No payments recorded</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="fac-history-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Payment History</h3>
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" style="padding: 1rem;">
+        <div id="fac-history-info" style="margin-bottom: 1rem;"></div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Date</th><th>Unit</th><th>Method</th><th>Amount</th></tr>
+            </thead>
+            <tbody id="fac-history-tbody"></tbody>
+          </table>
+          <div class="empty-state" id="fac-history-empty" style="display:none; padding: 2rem;"><p>No payments recorded</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="inv-history-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Investment History</h3>
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" style="padding: 1rem;">
+        <div id="inv-history-info" style="margin-bottom: 1rem;"></div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Date</th><th>Purpose</th><th>Method</th><th>Amount</th></tr>
+            </thead>
+            <tbody id="inv-history-tbody"></tbody>
+          </table>
+          <div class="empty-state" id="inv-history-empty" style="display:none; padding: 2rem;"><p>No investments recorded</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CONFIRM DELETE ==================== -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3>Confirm Delete</h3>
+        <button class="modal-close" data-close><i class="fas fa-times"></i></button>
+      </div>
+      <p class="confirm-text" id="confirm-text">Are you sure?</p>
+      <label id="cascade-delete-label" style="display:none; align-items: center; gap: 0.5rem; margin: 1rem 1.5rem; color: var(--red); font-size: 0.875rem; cursor: pointer;">
+        <input type="checkbox" id="cascade-delete" style="width: auto;">
+        Also delete all linked ledger entries
+      </label>
+      <div class="confirm-actions">
+        <button class="btn btn-sm" id="confirm-cancel">Cancel</button>
+        <button class="btn btn-danger btn-sm" id="confirm-ok">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== PRINT RECEIPT TEMPLATE ==================== -->
+  <div id="print-receipt">
+    <div class="receipt-header">
+      <div class="receipt-brand">
+        <img src="assets/nudge_logo.png" alt="Nudge Academy" class="receipt-logo">
+        <div>
+          <h1>Nudge Academy</h1>
+          <p class="receipt-tagline">CUET UG Preparation | Reach Central Universities</p>
+        </div>
+      </div>
+      <div class="receipt-company-info">
+        <p><strong>Website:</strong> www.nudge.academy</p>
+        <p><strong>Email:</strong> contact@nudge.academy</p>
+        <p><strong>Phone:</strong> +91 9625 986 622</p>
+      </div>
+    </div>
+    <div class="receipt-divider"></div>
+    <h2 class="receipt-title">PAYMENT RECEIPT</h2>
+    <div class="receipt-meta">
+      <div class="receipt-meta-left">
+        <p><strong>Student Name:</strong> <span id="receipt-name">---</span></p>
+        <p><strong>Batch / Course:</strong> <span id="receipt-batch">---</span></p>
+      </div>
+      <div class="receipt-meta-right">
+        <p><strong>Receipt Date:</strong> <span id="receipt-date">---</span></p>
+        <p><strong>Receipt No:</strong> <span id="receipt-number">---</span></p>
+      </div>
+    </div>
+    <table class="receipt-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Date</th><th>Description</th><th>Payment Method</th><th style="text-align: right;">Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody id="receipt-tbody"></tbody>
+    </table>
+    <div class="receipt-summary">
+      <div class="receipt-summary-item"><span>Total Course Fee:</span><span id="receipt-total-fee">₹0</span></div>
+      <div class="receipt-summary-item"><span>Total Amount Paid:</span><span id="receipt-total-paid">₹0</span></div>
+      <div class="receipt-summary-total"><span>Balance Due:</span><span id="receipt-balance">₹0</span></div>
+    </div>
+    <div class="receipt-refund">
+      <h3>Refund Policy</h3>
+      <ul>
+        <li>Full refund is available if requested within <strong>7 days</strong> of enrollment, provided no more than 10% of the course content has been accessed.</li>
+        <li>After 7 days, or if more than 10% of the content has been accessed, <strong>no refund</strong> will be issued.</li>
+        <li>Refunds will be processed within <strong>7–10 business days</strong> to the original payment method.</li>
+        <li>To request a refund, contact us at <strong>contact@nudge.academy</strong> or call <strong>+91 9625 986 622</strong> (Mon–Fri, 9 AM – 6 PM IST).</li>
+      </ul>
+    </div>
+    <div class="receipt-footer">
+      <div class="receipt-footer-left">
+        <p>Thank you for choosing <strong>Nudge Academy</strong>!</p>
+        <p class="receipt-footer-small">This is a computer-generated receipt. For queries, contact us at contact@nudge.academy</p>
+      </div>
+      <div class="receipt-footer-right">
+        <div class="receipt-signature-line"></div>
+        <p>Authorized Signatory</p>
+      </div>
+    </div>
+    <p class="receipt-copyright">© 2025 Nudge Academy. All rights reserved.</p>
+  </div>
+
+  <!-- ==================== TOAST ==================== -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script type="module" src="js/app.js?v=3"></script>
+</body>
+</html>

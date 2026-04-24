@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ==========================================
+    // Nudge Academy — Accounting System Rules
+    // ==========================================
+    // Only authenticated users can access accounting data.
+    // To further restrict, add specific email allowlists below.
+
+    // Helper: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper: Check if user is an admin (add your admin emails here)
+    function isAdmin() {
+      return isAuthenticated() && 
+        request.auth.token.email in [
+          'asifali@nudge.academy',
+          'rabin@nudge.academy',
+          // Add more admin emails below:
+        ];
+    }
+
+    // ==================== ACCOUNTING TRANSACTIONS ====================
+    match /accounting_transactions/{transactionId} {
+      allow read, write: if isAdmin();
+    }
+
+    // ==================== ACCOUNTING STUDENTS ====================
+    match /accounting_students/{studentId} {
+      allow read, write: if isAdmin();
+    }
+
+    // ==================== ACCOUNTING FACULTY ====================
+    match /accounting_faculty/{facultyId} {
+      allow read, write: if isAdmin();
+    }
+
+    // ==================== ACCOUNTING INVESTORS ====================
+    match /accounting_investors/{investorId} {
+      allow read, write: if isAdmin();
+    }
+
+    // ==================== DEFAULT: DENY ALL ====================
+    // Any collection not explicitly listed above is denied by default.
+    // This ensures students using the main LMS cannot access accounting data
+    // unless they also happen to be authenticated (which they would be if
+    // they use the same Firebase project).
+    //
+    // For maximum security, switch the rules above from isAuthenticated()
+    // to isAdmin() and populate the admin email list.
+  }
+}
